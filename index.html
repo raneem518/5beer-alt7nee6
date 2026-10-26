@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>خبير التحنيط | لعبة كيمياء</title>
+<style>
+:root{--gold:#e4bd65;--ink:#f7f0df;--muted:#c9bea5;--bg:#10131b;--panel:#1c2230;--line:#41475a;--teal:#6ad4c5}
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:radial-gradient(circle at top,#293044,#10131b 55%);color:var(--ink);min-height:100vh}
+.wrap{max-width:760px;margin:auto;padding:22px 16px 44px}.hero{text-align:center;padding:20px 10px 24px;border:1px solid #665735;border-radius:22px;background:linear-gradient(145deg,#242a39,#151923)}
+.symbol{font-size:42px;color:var(--gold)}h1{margin:8px 0;color:var(--gold);font-size:clamp(27px,6vw,42px)}.sub{color:var(--muted);line-height:1.8;margin:8px auto;max-width:540px}
+.pill{display:inline-block;border:1px solid #665735;border-radius:999px;padding:6px 12px;color:var(--gold);font-size:13px;margin:4px}
+.panel{margin-top:16px;padding:20px;border:1px solid var(--line);border-radius:18px;background:rgba(28,34,48,.94);box-shadow:0 10px 30px #0002}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.progress{height:7px;background:#353b4b;border-radius:10px;overflow:hidden;margin:13px 0 20px}.bar{height:100%;background:var(--gold);width:0%;transition:width .25s}
+.stage{font-size:13px;color:var(--teal);margin-bottom:8px}.question{font-size:22px;line-height:1.65;margin:8px 0 16px}.answers{display:grid;gap:10px}.answer{border:1px solid var(--line);border-radius:12px;background:#252c3d;color:var(--ink);padding:14px;text-align:right;font-size:16px;cursor:pointer;transition:.15s}.answer:hover{border-color:var(--gold);transform:translateY(-1px)}.answer:disabled{cursor:default;transform:none}.answer.correct{border-color:var(--teal);background:#183a39}.answer.wrong{border-color:#e58c87;background:#40272d}
+.feedback{padding:12px;border-radius:12px;background:#111722;line-height:1.7;margin-top:14px}.btn{border:0;border-radius:12px;background:var(--gold);color:#171717;font-weight:bold;font-size:16px;padding:13px 18px;cursor:pointer;margin-top:15px}.btn.secondary{background:transparent;color:var(--gold);border:1px solid #665735}.hidden{display:none}.score{font-size:32px;color:var(--gold);font-weight:bold}.foot{text-align:center;color:#9c9bad;font-size:12px;margin:20px 0 0;line-height:1.8}
+ul{line-height:2;color:var(--muted);padding-right:22px}.namebox{width:100%;padding:13px;border:1px solid var(--line);background:#111722;color:white;border-radius:10px;font-size:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+<div class="symbol">𓂀 🏺</div>
+<h1>خبير التحنيط</h1>
+<p class="sub">رحلة إلى مصر القديمة! اختبر معلوماتك عن كيمياء التحنيط، وخصائص المواد، وأسرار حفظ المومياوات.</p>
+</header>
+<section class="panel" id="intro">
+<h2>هل أنت مستعد للتحدي؟</h2>
+<p class="sub">أجب عن 10 أسئلة. لكل إجابة صحيحة نقطة واحدة، وتظهر لك المعلومة العلمية بعد كل سؤال.</p>
+<label for="player">اسم اللاعب (اختياري)</label>
+<input class="namebox" id="player" maxlength="30" placeholder="اكتب اسمك هنا">
+<button class="btn" id="start">ابدأ المغامرة ←</button>
+<ul><li>من 0 إلى 4 نقاط: متدرّب التحنيط</li><li>من 5 إلى 7 نقاط: مساعد خبير التحنيط</li><li>من 8 إلى 10 نقاط: خبير التحنيط الذهبي</li></ul>
+</section>
+<section class="panel hidden" id="game">
+<div class="row"><span id="counter">السؤال 1 من 10</span><strong>النقاط: <span id="score">0</span></strong></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="stage" id="stage"></div><div class="question" id="question"></div>
+<div class="answers" id="answers"></div><div class="feedback hidden" id="feedback" aria-live="polite"></div>
+<button class="btn hidden" id="next">السؤال التالي ←</button>
+</section>
+<section class="panel hidden" id="result">
+<div class="symbol">𓆣</div><h2 id="resultTitle">انتهى التحدي!</h2>
+<p>نتيجتك</p><div class="score" id="finalScore">0 / 10</div><p class="sub" id="resultText"></p>
+<button class="btn" id="again">العب مرة أخرى</button>
+<button class="btn secondary" onclick="window.print()">طباعة النتيجة</button>
+</section>
+<p class="foot">محتوى تعليمي عن التاريخ والكيمياء. لا توجد إعلانات أو تتبّع أو تسجيل دخول.<br>ملاحظة: المواد التاريخية المذكورة للتعلّم فقط؛ لا تُجرى تجارب تحنيط على البشر أو الحيوانات.</p>
+</div>
+<script>
+const qs=[
+{stage:"المرحلة الأولى • أسرار الكيمياء",q:"ما المادة التي استُخدمت لتجفيف الجسم في التحنيط المصري القديم؟",a:["السكر","النطرون","النشا"],c:1,e:"النطرون خليط طبيعي من أملاح استُخدم للمساعدة على امتصاص الرطوبة."},
+{stage:"المرحلة الأولى • أسرار الكيمياء",q:"لماذا كان تجفيف الجسم خطوة مهمة؟",a:["لتقليل التحلل","لزيادة الرطوبة","لتغيير شكل العظام"],c:0,e:"تقليل الماء يحدّ من ظروف نمو كثير من الكائنات الدقيقة التي تسهم في التحلل."},
+{stage:"المرحلة الأولى • أسرار الكيمياء",q:"أي علم يساعدنا على فهم خصائص مواد التحنيط؟",a:["علم الخرائط","الكيمياء","علم الفلك فقط"],c:1,e:"تدرس الكيمياء تركيب المواد وخصائصها والتغيرات التي تحدث لها."},
+{stage:"المرحلة الثانية • المواد والأدوات",q:"ما المادة التي استُخدمت في لفّ المومياء؟",a:["الكتان","الحديد","الزجاج"],c:0,e:"استُخدمت أشرطة الكتان في لفّ المومياء وحمايتها."},
+{stage:"المرحلة الثانية • المواد والأدوات",q:"الرطوبة قد تساعد على نمو بعض الكائنات الدقيقة. صح أم خطأ؟",a:["صح","خطأ","دائمًا تمنع النمو"],c:0,e:"توفر الرطوبة ظروفًا مناسبة لبعض الكائنات الدقيقة، بحسب الحرارة والبيئة."},
+{stage:"المرحلة الثانية • المواد والأدوات",q:"ما دور بعض الراتنجات في التحنيط؟",a:["إضافة الماء للجسم","المساعدة على حماية الجسم","إذابة الكتان"],c:1,e:"استخدمت بعض الراتنجات ضمن مواد التحنيط للمساعدة في الحماية والحفظ."},
+{stage:"المرحلة الثالثة • التحدي الفرعوني",q:"أي خاصية جعلت النطرون مفيدًا في عملية التجفيف؟",a:["إنتاج الضوء","امتصاص الرطوبة","التجمد في حرارة الغرفة"],c:1,e:"تساعد خصائص أملاح النطرون على سحب الرطوبة."},
+{stage:"المرحلة الثالثة • التحدي الفرعوني",q:"هل يضمن التجفيف وحده بقاء الجسم دون أي تغير إلى الأبد؟",a:["نعم، دائمًا","لا، قد تحدث تغيرات أخرى","الجسم يتحول إلى معدن"],c:1,e:"التجفيف يقلل التحلل لكنه لا يمنع جميع التغيرات على المدى الطويل."},
+{stage:"المرحلة الثالثة • التحدي الفرعوني",q:"ماذا قد ينتج عن تفاعل كيميائي بين مواد؟",a:["مواد جديدة","تغيّر في الموقع فقط","لا شيء في كل الحالات"],c:0,e:"يمكن أن ينتج عن التفاعل الكيميائي مواد جديدة لها خصائص مختلفة."},
+{stage:"المرحلة الثالثة • التحدي الفرعوني",q:"ما فائدة دراسة المومياوات من منظور علمي؟",a:["فهم تقنيات الحفظ والمواد القديمة","التنبؤ بالمستقبل","إيقاف الزمن"],c:0,e:"تكشف دراسة المومياوات عن مواد وتقنيات حفظ استخدمت في العصور القديمة."}
+];
+let i=0,score=0,locked=false,name="";
+const $=id=>document.getElementById(id);
+$("start").onclick=()=>{name=$("player").value.trim();$("intro").classList.add("hidden");$("game").classList.remove("hidden");render()};
+function render(){locked=false;const q=qs[i];$("counter").textContent=`السؤال ${i+1} من ${qs.length}`;$("score").textContent=score;$("bar").style.width=(i/qs.length*100)+"%";$("stage").textContent=q.stage;$("question").textContent=q.q;$("answers").innerHTML="";$("feedback").classList.add("hidden");$("next").classList.add("hidden");
+q.a.forEach((t,n)=>{const b=document.createElement("button");b.className="answer";b.textContent=["أ) ","ب) ","ج) "][n]+t;b.onclick=()=>choose(n,b);$("answers").appendChild(b)})}
+function choose(n,btn){if(locked)return;locked=true;const q=qs[i];[...$("answers").children].forEach((b,j)=>{b.disabled=true;if(j===q.c)b.classList.add("correct")});if(n===q.c){score++;btn.classList.add("correct")}else btn.classList.add("wrong");$("score").textContent=score;$("feedback").textContent=(n===q.c?"إجابة صحيحة! أحسنت. ":"الإجابة الصحيحة: "+q.a[q.c]+". ")+q.e;$("feedback").classList.remove("hidden");$("next").textContent=i===qs.length-1?"عرض النتيجة النهائية":"السؤال التالي ←";$("next").classList.remove("hidden")}
+$("next").onclick=()=>{if(i<qs.length-1){i++;render()}else finish()};
+function finish(){$("game").classList.add("hidden");$("result").classList.remove("hidden");$("bar").style.width="100%";$("finalScore").textContent=score+" / "+qs.length;let rank=score>=8?"خبير التحنيط الذهبي 👑":score>=5?"مساعد خبير التحنيط 🏺":"متدرّب التحنيط 🧪";$("resultTitle").textContent=(name? "أحسنت يا "+name+"!":"أحسنت!")+" "+rank;$("resultText").textContent=score>=8?"رائع! لديك معرفة قوية بكيمياء التحنيط.":score>=5?"أداء جيد! راجع المعلومات وحاول تحسين نتيجتك.":"بداية موفقة! اقرأ التفسيرات ثم أعد المحاولة."}
+$("again").onclick=()=>{i=0;score=0;$("result").classList.add("hidden");$("intro").classList.remove("hidden");$("player").value=name;};
+</script>
+</body>
+</html>
